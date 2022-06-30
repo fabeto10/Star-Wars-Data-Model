@@ -14,23 +14,29 @@ class User(Base):
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
+    favorite = relationship("Favorite", back_populates="parent")
 
 class Favorite(Base):
     __tablename__ = 'favorite'
-    user_id = Column(Integer, ForeignKey("user.id"))
-    user = relationship(User)
+    id = Column(Integer, primary_key=True)
+    user = relationship("user", back_populates="children")
+    planet_id = Column(Integer, ForeignKey("user.id"))
+    planet = relationship("favorite", back_populates="children")
+    character_id = Column(Integer, ForeignKey("user.id"))
+    character = relationship("favorite", back_populates="children")
 
 class Planet(Base):
     __tablename__ = 'planet'
-    id = Column(Integer, ForeignKey("user.id"))
-    user =Column(String(250), nullable=False)
-    favorite = relationship("planet", backref="favorite")
+    id = Column(Integer, primary_key=True)
+    favorite_id = Column(Integer, ForeignKey("favorite.id"))
+    favorite = relationship("favorite", back_populates="children")
 
 class Character(Base):
     __tablename__ = 'character'
-    id = Column(Integer, ForeignKey("user.id"))
-    user= Column(String(250), nullable=False)
-    favorite = relationship("character", backref="favorite")
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    favorite_id = Column(Integer, ForeignKey("favorite.id"))
+    favorite = relationship("favorite", back_populates="children")
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
