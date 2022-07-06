@@ -14,18 +14,18 @@ class User(Base):
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     password = Column(String(250), nullable=False)
-    favorite = relationship("Favorite", back_populates="parent")
+    favorite_id = Column(Integer, ForeignKey("favorites.id"))
+    favorites = relationship("Favorite", back_populates="user")
 
 class Favorite(Base):
     __tablename__ = 'favorite'
     id = Column(Integer, primary_key=True)
-    user = relationship("user", back_populates="children")
+    user = relationship("User", back_populates="favorites")
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("favorite", back_populates="children")
-    planet = Column(String(250), nullable=False)
-    character = Column(String(250), nullable=False)
-    # character_id = Column(Integer, ForeignKey(".id"))
-    # character = relationship("favorite", back_populates="children")
+    planets = Column(String(250), nullable=False)
+    character_id = Column(Integer, ForeignKey("character.id"))
+    character = relationship("Character", back_populates="favorites")
 
 class Planet(Base):
     __tablename__ = 'planet'
@@ -34,8 +34,7 @@ class Planet(Base):
     rotation_period = Column(String(250), nullable=False)
     population = Column(String(250), nullable=False)
     terrain = Column(String(250), nullable=False)
-    favorite_id = Column(Integer, ForeignKey("favorite.id"))
-    favorite = relationship("favorite", back_populates="children")
+    favorites = relationship("Favorite", back_populates="planet")
 
 class Character(Base):
     __tablename__ = 'character'
@@ -44,8 +43,7 @@ class Character(Base):
     height = Column(String(250), nullable=False)
     hair_color = Column(String(250), nullable= False)
     gender = Column(String(250), nullable=False)
-    favorite_id = Column(Integer, ForeignKey("favorite.id"))
-    favorite = relationship("favorite", back_populates="children")
+    favorites = relationship("Favorite", back_populates="character")
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
